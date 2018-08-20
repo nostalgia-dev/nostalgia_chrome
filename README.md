@@ -7,7 +7,7 @@ Cross-platform Chrome History Analysis
 
 ### Self tracking
 
-There is a movement of self tracking. Monitoring pulse, heartbeat, even etc. But the most important is not being tracked: our online behavior.
+There is a movement of self tracking. Monitoring pulse, heartbeat and so on. But the most important is not being tracked: our online behavior.
 
 Making sure we can self document, we need the following things.
 
@@ -31,7 +31,7 @@ To come
 
 3. To test it out, run `nostalgia serve`. Look at the `boot_as_service` on how to run `nostalgia` as a service on boot.
 
-4. Make sure you do not lose history, ensure ``
+4. Make sure you do not lose history, run `nostalgia backup_history` every (at most) 90 days.
 
 ### Data overview
 
