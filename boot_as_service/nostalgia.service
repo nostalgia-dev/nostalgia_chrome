@@ -1,0 +1,9 @@
+[Unit]
+Description=nostalgia service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/nostalgia serve
+
+[Install]
+WantedBy=multi-user.target
