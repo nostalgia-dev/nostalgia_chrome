@@ -1,3 +1,4 @@
+import time
 import pathlib
 import gzip
 import os
@@ -55,7 +56,7 @@ def add_text():
 
     slugged_url = slug_url(url)
 
-    # t1 = time.time()
+    t1 = time.time()
     # meta_path = BASE_PATH / "meta/v1/{}_{}.json".format(t1, slugged_url)
     # try:
     #     article = parse_article(html, url)
