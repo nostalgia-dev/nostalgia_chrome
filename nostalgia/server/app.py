@@ -90,7 +90,7 @@ def view_cache():
 
 @app.route("/list", methods=["GET", "POST", "OPTIONS"])
 @crossdomain(origin="*", headers="Content-Type")
-def list():
+def ls():
     keyword = request.args.get("keyword")
     files = os.listdir(BASE_PATH / "html")
     if keyword is not None:

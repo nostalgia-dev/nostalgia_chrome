@@ -2,7 +2,7 @@ import sys
 from nostalgia.server.app import run_server
 
 __project__ = "nostalgia"
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __repo__ = "https://github.com/kootenpv/nostalgia"
 
 
