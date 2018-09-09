@@ -5,7 +5,7 @@ Description=nostalgia service
 User=pascal
 Group=users
 Type=simple
-ExecStart=/usr/bin/nostalgia run_server
+ExecStart=/usr/bin/nostalgia run-server
 
 [Install]
 WantedBy=multi-user.target

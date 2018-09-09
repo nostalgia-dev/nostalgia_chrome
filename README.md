@@ -11,7 +11,7 @@ There is a movement of self tracking. Monitoring pulse, heartbeat and so on. But
 
 Making sure we can self document, we need the following things.
 
-1. Chrome only keeps its history for a max of 90 days, so we need to **start saving history**.
+1. Chrome only keeps its history for [a max of 90 days](https://support.google.com/chrome/answer/95589), so we need to **start saving history**.
 
 2. We need to **collect** HTML data from the pages we visit and keep them cached.
 

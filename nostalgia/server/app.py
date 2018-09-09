@@ -75,7 +75,7 @@ def add_text():
 
     last.append(html)
     last_urls.append(url)
-    return jsonify({"urls": last_urls})
+    return jsonify({"urls": list(last_urls)})
 
 
 @app.route("/view_cache", methods=["GET", "POST", "OPTIONS"])
