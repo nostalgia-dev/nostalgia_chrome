@@ -13,6 +13,7 @@ for x in tqdm.tqdm(just.glob("/home/pascal/.nostalgia/meta/v1/*.json")):
     if "extruct" in meta:
         print("skipping", x)
         continue
+
     html_path = "/home/pascal/.nostalgia/html/" + x.split("/")[-1].rstrip(".json") + ".html.gz"
     if os.path.exists(html_path):
         with gzip.GzipFile(html_path, "r") as f:

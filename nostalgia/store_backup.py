@@ -37,8 +37,10 @@ def chrome_history_path(beta=False):
 def backup_history(base="~/.nostalgia", beta=False):
     """ Copies the Chrome History sqlite to a safe location """
     chp = chrome_history_path(beta)
-    target = os.path.join(base, "sqlite/{}_history".format(datetime.now().date()))
+    target = os.path.expanduser(
+        os.path.join(base, "sqlite/{}_history".format(datetime.now().date()))
+    )
     shutil._ensure_directory(target)
     shutil.copy2(chp, target)
-    latest = os.path.join(base, "sqlite/latest")
+    latest = os.path.expanduser(os.path.join(base, "sqlite/latest"))
     os.symlink(target, latest)

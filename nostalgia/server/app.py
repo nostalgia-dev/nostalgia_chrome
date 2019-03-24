@@ -8,9 +8,10 @@ from collections import deque
 import lxml.html
 
 from flask import Flask, jsonify, request, make_response, current_app
-from requests_viewer.web import make_tree, view_diff_html
+
 
 from nostalgia.server.cors import crossdomain
+from nostalgia.server.utils import make_tree
 
 BASE_PATH = pathlib.Path("/home/pascal/.nostalgia/")
 app = Flask(__name__, static_folder=BASE_PATH / "html")
@@ -26,12 +27,12 @@ def root():
     return last[-1]
 
 
-@app.route("/diff", methods=["GET", "POST", "OPTIONS"])
-def view_diff():
-    return view_diff_html(last[-2], last[-1])
+# @app.route("/diff", methods=["GET", "POST", "OPTIONS"])
+# def view_diff():
+#     return view_diff_html(last[-2], last[-1])
 
 
-blocklist = ["/localhost", "file:/", "/127.0.0.1", "chrome:", "/google", "www.google", "localhost:"]
+blocklist = ["/localhost", "file:/", "/127.0.0.1", "chrome:", "localhost:"]
 
 
 def slug_url(url):
@@ -102,7 +103,7 @@ def ls():
 
 def run_server(host="127.0.0.1", port=21487):
     """ Run nostalgia which receives pages when visiting a page in Chrome. """
-    app.run(host, port)
+    app.run(host, port, debug=True)
 
 
 if __name__ == "__main__":
