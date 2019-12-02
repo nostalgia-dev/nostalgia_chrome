@@ -34,7 +34,7 @@ def chrome_history_path(beta=False):
     return os.path.expanduser(user_path)
 
 
-def backup_history(base="~/.nostalgia", beta=False):
+def backup_history(base="~/.nostalgia_chrome", beta=False):
     """ Copies the Chrome History sqlite to a safe location """
     chp = chrome_history_path(beta)
     target = os.path.expanduser(

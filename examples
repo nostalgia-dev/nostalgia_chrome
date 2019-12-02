@@ -1,0 +1,72 @@
+what was the price of the phone that i found online while i was at the pub near my work on the day that i went to KFC
+where have i been yesterday
+how much did i spend for lunch yesterday
+
+
+units:
+- money
+- time
+- km
+
+
+spend, cost
+conditions: ?product, ?money, ?text, ?time, ?source
+
+
+
+type: product
+price: 179.99
+text: motorola phone
+source: chrome
+time: 17239481
+
+type: place
+place: KFC
+tags: kfc, fast food
+visitTime: 123123111
+long, lat: 55.0, 5.0
+source: location history
+
+type: place
+place: Cafe Something
+tags: cafe, something, pub, bar, restaurant
+visitTime: 123123111, 1231231131
+long, lat: 50.0, 5.0
+
+type: place
+place: work
+tags: viqtor davis
+long, lat: 50.1, 5.0
+visitTime: 123123111, 1231231131
+
+
+
+
+id: 1
+type: product
+price: 179.99
+text: motorola phone
+source: chrome
+
+id: 1
+type: visit
+time: 17239481
+
+id: 2
+type: place
+place: KFC
+tags: kfc, fast food
+long, lat: 55.0, 5.0
+source: location history
+
+id: 2
+type: visit
+time: 123123111
+
+
+
+
+
+
+
+kfc.vistitime.daystart < (pub near work).visittime < kfc.vistitime.dayend

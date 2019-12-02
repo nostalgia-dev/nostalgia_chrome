@@ -1,13 +1,13 @@
 import sys
-from nostalgia.server.app import run_server
+from nostalgia_chrome.server.app import run_server
 
-__project__ = "nostalgia"
-__version__ = "0.0.5"
-__repo__ = "https://github.com/kootenpv/nostalgia"
+__project__ = "nostalgia_chrome"
+__version__ = "0.0.6"
+__repo__ = "https://github.com/kootenpv/nostalgia_chrome"
 
 
 def print_version():
-    """ Prints the current version of nostalgia, and more """
+    """ Prints the current version of nostalgia_chrome, and more """
     sv = sys.version_info
     py_version = "{}.{}.{}".format(sv.major, sv.minor, sv.micro)
     version_parts = __version__.split(".")

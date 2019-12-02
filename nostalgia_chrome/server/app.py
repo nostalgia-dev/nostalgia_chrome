@@ -1,4 +1,6 @@
+import json
 import time
+from datetime import datetime
 import pathlib
 import gzip
 import os
@@ -10,10 +12,11 @@ import lxml.html
 from flask import Flask, jsonify, request, make_response, current_app
 
 
-from nostalgia.server.cors import crossdomain
-from nostalgia.server.utils import make_tree
+from nostalgia_chrome.server.cors import crossdomain
+from nostalgia_chrome.server.utils import make_tree
 
-BASE_PATH = pathlib.Path("/home/pascal/.nostalgia/")
+BASE_PATH = pathlib.Path("/home/pascal/.nostalgia_chrome/")
+META_PATH = BASE_PATH / "meta.jsonl"
 app = Flask(__name__, static_folder=BASE_PATH / "html")
 
 #  html = just.read("index.html")
@@ -32,7 +35,7 @@ def root():
 #     return view_diff_html(last[-2], last[-1])
 
 
-blocklist = ["/localhost", "file:/", "/127.0.0.1", "chrome:", "localhost:"]
+blocklist = ["/localhost", "file:/", "/127.0.0.1", "chrome:", "localhost:", "/tmp/"]
 
 
 def slug_url(url):
@@ -45,8 +48,10 @@ def slug_url(url):
 @crossdomain(origin="*", headers="Content-Type")
 def add_text():
     url = request.json["url"]
+    print("url", url)
 
     if any([y in url for y in blocklist]):
+        print("blocked", [y for y in blocklist if y in url])
         return jsonify({})
     html = request.json["html"]
     html = lxml.html.tostring(lxml.html.fromstring(html.encode("utf8")))
@@ -73,6 +78,10 @@ def add_text():
     html_path = BASE_PATH / "html/{}_{}.html.gz".format(t1, slugged_url)
     with gzip.GzipFile(html_path, "w") as f:
         f.write(html)
+
+    obj = {"path": str(html_path), "url": url, "time": str(time.time())}
+    with open(META_PATH, "a") as f:
+        f.write(json.dumps(obj) + "\n")
 
     last.append(html)
     last_urls.append(url)
@@ -102,7 +111,7 @@ def ls():
 
 
 def run_server(host="127.0.0.1", port=21487):
-    """ Run nostalgia which receives pages when visiting a page in Chrome. """
+    """ Run nostalgia_chrome which receives pages when visiting a page in Chrome. """
     app.run(host, port, debug=True)
 
 

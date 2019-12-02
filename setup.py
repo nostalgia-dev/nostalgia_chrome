@@ -5,22 +5,22 @@ with open("README.md") as f:
     LONG_DESCRIPTION = f.read()
 MAJOR_VERSION = "0"
 MINOR_VERSION = "0"
-MICRO_VERSION = "5"
+MICRO_VERSION = "6"
 VERSION = "{}.{}.{}".format(MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION)
 
 install_requires = ["lxml", "flask", "fire"]
 
 setup(
-    name="nostalgia",
+    name="nostalgia_chrome",
     version=VERSION,
     description="Self tracking your online life!",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    url="https://github.com/kootenpv/nostalgia",
+    url="https://github.com/nostalgia-dev/nostalgia_chrome",
     author="Pascal van Kooten",
     author_email="kootenpv@gmail.com",
     license="MIT",
-    entry_points={"console_scripts": ["nostalgia = nostalgia.__main__:_main"]},
+    entry_points={"console_scripts": ["nostalgia_chrome = nostalgia_chrome.__main__:_main"]},
     classifiers=[
         "Environment :: Console",
         "Intended Audience :: Developers",

@@ -8,7 +8,7 @@ pool = Pool(4)
 # extracts = pool.map(extruct.extract, file_contents)
 
 
-data = just.multi_read("~/.nostalgia/html/*.json")
+data = just.multi_read("~/.nostalgia_chrome/html/*.json")
 file_names, file_contents = data.keys(), data.values()
 
 
@@ -17,7 +17,7 @@ def extract_and_save(args):
     url = file_content["url"]
     html = file_content["html"]
     parsed = parse_article(html, url)
-    just.write(parsed, "~/.nostalgia/metadata/" + file_name.split("/")[-1])
+    just.write(parsed, "~/.nostalgia_chrome/metadata/" + file_name.split("/")[-1])
 
 
 zz = [extract_and_save(x) for x in zip(file_names, file_contents)]

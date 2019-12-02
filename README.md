@@ -1,9 +1,9 @@
-## nostalgia [alpha]
+## nostalgia_chrome [alpha]
 
 Cross-platform Chrome History Analysis
 
-[![PyPI](https://img.shields.io/pypi/v/nostalgia.svg?style=flat-square)](https://pypi.python.org/pypi/nostalgia/)
-[![PyPI](https://img.shields.io/pypi/pyversions/nostalgia.svg?style=flat-square)](https://pypi.python.org/pypi/nostalgia/)
+[![PyPI](https://img.shields.io/pypi/v/nostalgia_chrome.svg?style=flat-square)](https://pypi.python.org/pypi/nostalgia_chrome/)
+[![PyPI](https://img.shields.io/pypi/pyversions/nostalgia_chrome.svg?style=flat-square)](https://pypi.python.org/pypi/nostalgia_chrome/)
 
 ### Self tracking
 
@@ -27,11 +27,11 @@ To come
 
 1. For now, go to Extensions in Chrome, and "load unpacked". Open the `chromePlugin` in this folder.
 
-2. `pip install nostalgia`
+2. `pip install nostalgia_chrome`
 
-3. To test it out, run `nostalgia serve`. Look at the `boot_as_service` on how to run `nostalgia` as a service on boot.
+3. To test it out, run `nostalgia_chrome serve`. Look at the `boot_as_service` on how to run `nostalgia_chrome` as a service on boot.
 
-4. Make sure you do not lose history, run `nostalgia backup_history` every (at most) 90 days.
+4. Make sure you do not lose history, run `nostalgia_chrome backup_history` every (at most) 90 days.
 
 ### Data overview
 

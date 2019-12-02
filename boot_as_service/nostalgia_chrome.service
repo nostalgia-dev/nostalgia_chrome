@@ -1,5 +1,5 @@
 [Unit]
-Description=nostalgia service
+Description=nostalgia_chrome service
 After=network-online.target
 
 [Service]
@@ -7,7 +7,7 @@ User=pascal
 Group=users
 Type=simple
 Restart=always
-ExecStart=/usr/bin/nostalgia run-server
+ExecStart=/usr/bin/nostalgia_chrome run-server
 
 [Install]
 WantedBy=multi-user.target

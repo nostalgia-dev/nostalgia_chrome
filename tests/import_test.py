@@ -1,4 +1,4 @@
-from nostalgia import print_version
+from nostalgia_chrome import print_version
 
 
 def test_print_version():
