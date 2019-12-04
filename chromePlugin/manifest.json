@@ -18,6 +18,9 @@
   "browser_action": {
     "default_icon": "icon.png"
   },
+  "icons": { "16": "Nostalgia-C_16x16.png",
+             "48": "Nostalgia-C_48x48.png",
+             "128": "Nostalgia-C_128x128.png" },
   "permissions": [
     "webNavigation"
   ],
