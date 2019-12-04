@@ -8,6 +8,7 @@ Group=users
 Type=simple
 Restart=always
 ExecStart=/usr/bin/nostalgia_chrome run-server
+Environment="PYTHONUNBUFFERED=on"
 
 [Install]
 WantedBy=multi-user.target

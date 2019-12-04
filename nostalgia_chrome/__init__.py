@@ -2,8 +2,8 @@ import sys
 from nostalgia_chrome.server.app import run_server
 
 __project__ = "nostalgia_chrome"
-__version__ = "0.0.6"
-__repo__ = "https://github.com/kootenpv/nostalgia_chrome"
+__version__ = "0.0.7"
+__repo__ = "https://github.com/nostalgia-dev/nostalgia_chrome"
 
 
 def print_version():
