@@ -1,4 +1,4 @@
-import json
+import just
 import time
 from datetime import datetime
 import pathlib
@@ -17,6 +17,7 @@ from nostalgia_chrome.server.utils import make_tree
 
 BASE_PATH = pathlib.Path("/home/pascal/.nostalgia/")
 META_PATH = BASE_PATH / "meta.jsonl"
+VIDEO_PATH = BASE_PATH / "videos_watched.jsonl"
 app = Flask(__name__, static_folder=BASE_PATH / "html")
 
 #  html = just.read("index.html")
@@ -80,12 +81,19 @@ def add_text():
         f.write(html)
 
     obj = {"path": str(html_path), "url": url, "time": str(time.time())}
-    with open(META_PATH, "a") as f:
-        f.write(json.dumps(obj) + "\n")
+    just.append(obj, META_PATH)
 
     last.append(html)
     last_urls.append(url)
     return jsonify({"urls": list(last_urls)})
+
+
+@app.route("/video_watched", methods=["GET", "POST", "OPTIONS"])
+@crossdomain(origin="*", headers="Content-Type")
+def add_video_watch():
+    just.append(request.json, VIDEO_PATH)
+    print("video watched")
+    return ""
 
 
 @app.route("/view_cache", methods=["GET", "POST", "OPTIONS"])

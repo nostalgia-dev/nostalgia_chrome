@@ -8,11 +8,13 @@
  * The callback function is called upon completion of the request */
 
 function onCompleted(event) {
+  console.log("c1")
   if (event.url != "about:blank") {
     // console.log(event);
     setTimeout(function() {
       chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         if (tabs.length) {
+          console.log("c11")
           chrome.tabs.sendMessage(tabs[0].id, {save: true, event_url: event.url});
         }
       });
@@ -21,9 +23,25 @@ function onCompleted(event) {
   }
 }
 
+function onCompleted2(event) {
+  console.log("c2")
+  if (event.url != "about:blank") {
+    // console.log(event);
+    setTimeout(function() {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        if (tabs.length) {
+          console.log("c22")
+          chrome.tabs.sendMessage(tabs[0].id, {save: true, event_url: event.url});
+        }
+      });
+    }, 1000);
+  }
+}
+
+
 chrome.webNavigation.onHistoryStateUpdated.addListener(onCompleted);
 
-chrome.webNavigation.onCompleted.addListener(onCompleted);
+chrome.webNavigation.onCompleted.addListener(onCompleted2);
 
 chrome.runtime.onMessage.addListener(function(request, sender, callback) {
   console.log("received and sending externally")
