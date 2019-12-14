@@ -13,11 +13,11 @@ Making sure we can self document, we need the following things.
 
 1. Chrome only keeps its history for [a max of 90 days](https://support.google.com/chrome/answer/95589), so we need to **start saving history**.
 
-1. We need to **collect** HTML data from the pages we visit and keep them cached.
+1. We need to **collect** HTML data from the pages we visit.
 
-1. (Cleaning up) We need to **extract and analyze** data from the HTML, such as code snippets, links, microdata, images, events.. anything really. This is done in [Nostalgia Core](https://github.com/nostalgia-dev/nostalgia).
+1. We need to **extract and analyze** data from the HTML, such as code snippets, links, microdata, images, events.. anything really. This is done in [Nostalgia Core](https://github.com/nostalgia-dev/nostalgia).
 
-4. Allow **plugins** (and make them configurable, please [contribute]()). The first example is that it will additionally track which videos you watch.
+4. Allow **plugins** (and make them configurable, please [contribute](https://github.com/nostalgia-dev/nostalgia_chrome/issues/2)). The first example is that it will additionally track which videos you watch.
 
 ### Installation
 
