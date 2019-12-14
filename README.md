@@ -19,23 +19,7 @@ Making sure we can self document, we need the following things.
 
 4. Allow **plugins** (and make them configurable, please [contribute](https://github.com/nostalgia-dev/nostalgia_chrome/issues/2)). The first example is that it will additionally track which videos you watch.
 
-### Installation
-
-1. Clone this repository: `git clone git@github.com:nostalgia-dev/nostalgia_chrome.git`
-
-1. In Chrome click the settings button and click "More tools" and navigate to "Extensions". Click "Load unpacked". Navigate to the `chromePlugin` folder and click "Open".
-
-1. `pip install nostalgia_chrome`
-
-1. To test it out, run `nostalgia_chrome serve`. This will run the web server in the foreground so you can see that it works.
-
-1. Visit a (non-file / localhost) URL so that you can verify it works. The data will be stored in `~/.nostalgia/meta.jsonl`, `~/.nostalgia/html`.
-
-1. To make sure `nostalgia_chrome` gets automatically run on boot, look at the `boot_as_service` folder on how to run `nostalgia_chrome` as a service on boot.
-
-Note: contributions of service files are asked for: here are the corresponding [Windows issue](https://github.com/nostalgia-dev/nostalgia_chrome/issues/2) and [OSX issue](https://github.com/nostalgia-dev/nostalgia_chrome/issues/1).
-
-### Data overview
+### What can you expect (Data overview)
 
 In `~/.nostalgia/meta.jsonl` an index will be saved per visit:
 
@@ -62,3 +46,19 @@ In `~/.nostalgia/videos_watched.jsonl` the data for events on HTML5 video elemen
       "likes": 24137,
       "dislikes": 946
     }
+
+### Installation
+
+1. Clone this repository: `git clone git@github.com:nostalgia-dev/nostalgia_chrome.git`
+
+1. In Chrome click the settings button and click "More tools" and navigate to "Extensions". Click "Load unpacked". Navigate to the `chromePlugin` folder and click "Open".
+
+1. `pip install nostalgia_chrome`
+
+1. To test it out, run `nostalgia_chrome serve`. This will run the web server in the foreground so you can see that it works.
+
+1. Visit a (non-file / localhost) URL so that you can verify it works. The data will be stored in `~/.nostalgia/meta.jsonl`, `~/.nostalgia/html`.
+
+1. To make sure `nostalgia_chrome` gets automatically run on boot, look at the `boot_as_service` folder on how to run `nostalgia_chrome` as a service on boot.
+
+Note: contributions of service files are asked for: here are the corresponding [Windows issue](https://github.com/nostalgia-dev/nostalgia_chrome/issues/2) and [OSX issue](https://github.com/nostalgia-dev/nostalgia_chrome/issues/1).
