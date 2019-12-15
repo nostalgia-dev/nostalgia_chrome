@@ -8,7 +8,7 @@ MINOR_VERSION = "0"
 MICRO_VERSION = "10"
 VERSION = "{}.{}.{}".format(MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION)
 
-install_requires = ["lxml", "flask", "fire"]
+install_requires = ["lxml", "flask", "fire", "bs4"]
 
 setup(
     name="nostalgia_chrome",
@@ -18,6 +18,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/nostalgia-dev/nostalgia_chrome",
     author="Pascal van Kooten",
+    install_requires=install_requires,
     author_email="kootenpv@gmail.com",
     license="MIT",
     entry_points={"console_scripts": ["nostalgia_chrome = nostalgia_chrome.__main__:_main"]},

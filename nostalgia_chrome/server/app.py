@@ -28,6 +28,8 @@ last_urls = deque(maxlen=5)
 
 @app.route("/", methods=["GET", "POST", "OPTIONS"])
 def root():
+    if not last:
+        return ""
     return last[-1]
 
 
