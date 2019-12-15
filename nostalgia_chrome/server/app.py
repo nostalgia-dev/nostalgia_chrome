@@ -79,8 +79,7 @@ def add_text():
     # just.write(metadata, meta_path)
 
     html_path = BASE_PATH / "html/{}_{}.html.gz".format(t1, slugged_url)
-    with gzip.GzipFile(html_path, "w") as f:
-        f.write(html)
+    just.write(html, html_path)
 
     obj = {"path": str(html_path), "url": url, "time": str(time.time())}
     just.append(obj, META_PATH)
