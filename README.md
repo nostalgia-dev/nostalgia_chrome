@@ -17,7 +17,7 @@ Making sure we can self document, we need the following things.
 
 1. We need to **extract and analyze** data from the HTML, such as code snippets, links, microdata, images, events.. anything really. This is done in [Nostalgia Core](https://github.com/nostalgia-dev/nostalgia).
 
-4. Allow **plugins** (and make them configurable, please [contribute](https://github.com/nostalgia-dev/nostalgia_chrome/issues/2)). The first example is that it will additionally track which videos you watch.
+4. Allow **plugins** (and make them configurable, please [contribute](https://github.com/nostalgia-dev/nostalgia_chrome/issues/3)). The first example is that it will additionally track which videos you watch.
 
 ### What can you expect (Data overview)
 
@@ -59,6 +59,13 @@ In `~/.nostalgia/videos_watched.jsonl` the data for events on HTML5 video elemen
 
 1. Visit a (non-file / localhost) URL so that you can verify it works. The data will be stored in `~/.nostalgia/meta.jsonl`, `~/.nostalgia/html`.
 
-1. To make sure `nostalgia_chrome` gets automatically run on boot, look at the `boot_as_service` folder on how to run `nostalgia_chrome` as a service on boot.
+1. To make sure `nostalgia_chrome` gets automatically run on boot:
 
-Note: contributions of service files are asked for: here are the corresponding [Windows issue](https://github.com/nostalgia-dev/nostalgia_chrome/issues/2) and [OSX issue](https://github.com/nostalgia-dev/nostalgia_chrome/issues/1).
+On Linux (systemctl based):
+
+    pip install sysdm
+    sysdm create "nostalgia_chrome run_server" --extensions ""
+
+On Windows awaiting contribution for how to do this https://github.com/nostalgia-dev/nostalgia_chrome/issues/2
+
+On OSX awaiting contribution for how to do this https://github.com/nostalgia-dev/nostalgia_chrome/issues/1
