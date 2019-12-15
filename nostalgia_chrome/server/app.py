@@ -1,7 +1,6 @@
 import just
 import time
 from datetime import datetime
-import pathlib
 import gzip
 import os
 import re
@@ -15,10 +14,11 @@ from flask import Flask, jsonify, request, make_response, current_app
 from nostalgia_chrome.server.cors import crossdomain
 from nostalgia_chrome.server.utils import make_tree
 
-BASE_PATH = pathlib.Path("~/.nostalgia/")
-META_PATH = BASE_PATH / "meta.jsonl"
-VIDEO_PATH = BASE_PATH / "videos_watched.jsonl"
-app = Flask(__name__, static_folder=BASE_PATH / "html")
+BASE_PATH = "~/.nostalgia/"
+META_PATH = BASE_PATH + "meta.jsonl"
+
+VIDEO_PATH = BASE_PATH + "videos_watched.jsonl"
+app = Flask(__name__, static_folder=BASE_PATH + "html")
 
 #  html = just.read("index.html")
 
@@ -78,10 +78,12 @@ def add_text():
     #     json.dump(metadata, f, indent=4)
     # just.write(metadata, meta_path)
 
-    html_path = BASE_PATH / "html/{}_{}.html.gz".format(t1, slugged_url)
+    html_path = BASE_PATH + "html/{}_{}.html.gz".format(t1, slugged_url)
+    print("html_path", html_path)
     just.write(html, html_path)
 
     obj = {"path": str(html_path), "url": url, "time": str(time.time())}
+    print("META_PATH", META_PATH)
     just.append(obj, META_PATH)
 
     last.append(html)
@@ -121,7 +123,7 @@ def ls():
 
 def run_server(host="127.0.0.1", port=21487):
     """ Run nostalgia_chrome which receives pages when visiting a page in Chrome. """
-    app.run(host, port, debug=True)
+    app.run(host, port)
 
 
 if __name__ == "__main__":
