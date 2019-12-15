@@ -15,7 +15,7 @@ from flask import Flask, jsonify, request, make_response, current_app
 from nostalgia_chrome.server.cors import crossdomain
 from nostalgia_chrome.server.utils import make_tree
 
-BASE_PATH = pathlib.Path("/home/pascal/.nostalgia/")
+BASE_PATH = pathlib.Path("~/.nostalgia/")
 META_PATH = BASE_PATH / "meta.jsonl"
 VIDEO_PATH = BASE_PATH / "videos_watched.jsonl"
 app = Flask(__name__, static_folder=BASE_PATH / "html")
