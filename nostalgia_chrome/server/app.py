@@ -61,7 +61,7 @@ def add_text():
 
     tree = make_tree(html, url)
 
-    html = lxml.html.tostring(tree)
+    html = lxml.html.tostring(tree).decode("utf8")
 
     slugged_url = slug_url(url)
 
