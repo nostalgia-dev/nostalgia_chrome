@@ -21,18 +21,18 @@ Making sure we can self document, we need the following things.
 
 ### What can you expect (Data overview)
 
-In `~/.nostalgia/meta.jsonl` an index will be saved per visit:
+In `~/nostalgia_data/meta.jsonl` an index will be saved per visit:
 
     {
-      "path":"/home/pascal/.nostalgia/html/1576317113.7_httpsgithubcomnostalgiadevnostalgia_chrome.html.gz",
+      "path":"/home/pascal/nostalgia_data/html/1576317113.7_httpsgithubcomnostalgiadevnostalgia_chrome.html.gz",
       "url": "https://github.com/nostalgia-dev/nostalgia_chrome",
       "time":"1576317113.75019"
     }
 
 
-In `~/.nostalgia/html` the source HTML will be stored as `.html.gz` (reaching about 8x compression).
+In `~/nostalgia_data/html` the source HTML will be stored as `.html.gz` (reaching about 8x compression).
 
-In `~/.nostalgia/videos_watched.jsonl` the data for events on HTML5 video elements will be stored (on stop playing/close tab):
+In `~/nostalgia_data/videos_watched.jsonl` the data for events on HTML5 video elements will be stored (on stop playing/close tab):
 
     {
       "playingSince": 1576273573.08,
@@ -57,7 +57,7 @@ In `~/.nostalgia/videos_watched.jsonl` the data for events on HTML5 video elemen
 
 1. To test it out, run `nostalgia_chrome serve`. This will run the web server in the foreground so you can see that it works.
 
-1. Visit a (non-file / localhost) URL so that you can verify it works. The data will be stored in `~/.nostalgia/meta.jsonl`, `~/.nostalgia/html`.
+1. Visit a (non-file / localhost) URL so that you can verify it works. The data will be stored in `~/nostalgia_data/meta.jsonl`, `~/nostalgia_data/html`.
 
 1. To make sure `nostalgia_chrome` gets automatically run on boot:
 
