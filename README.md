@@ -55,7 +55,7 @@ In `~/nostalgia_data/videos_watched.jsonl` the data for events on HTML5 video el
 
 1. `pip install nostalgia_chrome`
 
-1. To test it out, run `nostalgia_chrome serve`. This will run the web server in the foreground so you can see that it works.
+1. To test it out, run `nostalgia_chrome server`. This will run the web server in the foreground so you can see that it works.
 
 1. Visit a (non-file / localhost) URL so that you can verify it works. The data will be stored in `~/nostalgia_data/meta.jsonl`, `~/nostalgia_data/html`.
 

@@ -5,10 +5,10 @@ with open("README.md") as f:
     LONG_DESCRIPTION = f.read()
 MAJOR_VERSION = "0"
 MINOR_VERSION = "0"
-MICRO_VERSION = "17"
+MICRO_VERSION = "20"
 VERSION = "{}.{}.{}".format(MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION)
 
-install_requires = ["lxml", "flask", "fire", "bs4"]
+install_requires = ["lxml", "flask", "fire", "bs4", "just"]
 
 setup(
     name="nostalgia_chrome",

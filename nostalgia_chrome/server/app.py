@@ -88,6 +88,7 @@ def add_text():
 
     last.append(html)
     last_urls.append(url)
+    print("saved", url)
     return jsonify({"urls": list(last_urls)})
 
 
