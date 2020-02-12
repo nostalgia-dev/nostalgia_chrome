@@ -7,3 +7,7 @@ def _main():
     import fire as _fire
 
     _fire.Fire()
+
+
+if __name__ == "__main__":
+    _main()
