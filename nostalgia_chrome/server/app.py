@@ -14,7 +14,7 @@ from flask import Flask, jsonify, request, make_response, current_app
 from nostalgia_chrome.server.cors import crossdomain
 from nostalgia_chrome.server.utils import make_tree
 
-BASE_PATH = "~/nostalgia_data/"
+BASE_PATH = os.path.expanduser("~/nostalgia_data/")
 META_PATH = BASE_PATH + "meta.jsonl"
 
 VIDEO_PATH = BASE_PATH + "videos_watched.jsonl"
@@ -114,7 +114,7 @@ def view_cache():
 @crossdomain(origin="*", headers="Content-Type")
 def ls():
     keyword = request.args.get("keyword")
-    files = os.listdir(BASE_PATH / "html")
+    files = os.listdir(BASE_PATH + "html")
     if keyword is not None:
         files = [x for x in files if keyword in x]
     files = files[:500]
@@ -122,7 +122,7 @@ def ls():
     return "<html><body>{}</body></html>".format(body)
 
 
-def run_server(host="127.0.0.1", port=21487):
+def run_server(host="0.0.0.0", port=21487):
     """ Run nostalgia_chrome which receives pages when visiting a page in Chrome. """
     app.run(host, port)
 

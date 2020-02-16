@@ -1,0 +1,13 @@
+version: "3"
+services:
+  chrome_extension:
+    image: nostalgia_chrome
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=true
+    container_name: nostalgia_chrome
+    ports:
+      - 21487:21487
+    volumes:
+      - ~/nostalgia_data:/root/nostalgia_data/
+    restart: always
