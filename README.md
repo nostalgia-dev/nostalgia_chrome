@@ -63,6 +63,8 @@ In `~/nostalgia_data/videos_watched.jsonl` the data for events on HTML5 video el
 
 On Linux (systemctl based):
 
+Ensure you've activated the same virtualenv, or use the same python version for sysdm as nostalgia_chrome. Then:
+
     pip install sysdm
     sysdm create "nostalgia_chrome run_server" --extensions ""
 
