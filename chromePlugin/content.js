@@ -1,109 +1,241 @@
+getLogger('content').debug('Content script loaded');
+var serverUrl = 'http://localhost:21487';
 
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    // console.log(sender);
-    // console.log(sender.tab ?
-    //             "from a content script:" + sender.tab.url :
-    //             "from the extension");
-    if (request.save && request.event_url == window.location.href)
-      chrome.runtime.sendMessage({
-        method: 'POST',
-        action: 'xhttp',
-        url: 'http://localhost:21487/post_json',
-        data: JSON.stringify({"html": document.documentElement.innerHTML,
-                              "url": window.location.href})
-      })
-  }
-);
+chrome.runtime.onMessage.addListener(onWebsiteVisited);
 
 // video listening / sending
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    window.addEventListener('beforeunload', function(event) {
-      var vids = document.getElementsByTagName('video')
-      var pageLoadTime = new Date() / 1000;
-      // vids is an HTMLCollection
-      for (var i = 0; i < vids.length; i++ ) {
-        stopEvent(vids.item(i));
-      }
-    });
-    //console.log("msg " + JSON.stringify(request));
-    function videoWatched(ele) {
-      now = new Date() / 1000
-      var ytLikeDislike = document.querySelector("paper-tooltip.style-scope.ytd-sentiment-bar-renderer > #tooltip");
-      if (ytLikeDislike) {
-        ytLikeDislike = ytLikeDislike.innerText.trim().split(" / ").map(function(x) { return parseInt(x.replace(".", "").replace(",", "")); })
-      } else {
-        ytLikeDislike = [null, null]
-      }
-      data = {"playingSince": ele.playingSince, "seekTime": ele.seekTime, "playingUntil": now, "duration": now - ele.playingSince, "totalClipDuration": ele.duration, "pageLoadTime": pageLoadTime, "loc": window.location.href, "title": document.title, "likes": ytLikeDislike[0], "dislikes": ytLikeDislike[1]}
-      console.log(data);
-      chrome.runtime.sendMessage({
-        method: 'POST',
-        action: 'xhttp',
-        url: 'http://localhost:21487/video_watched',
-        data: JSON.stringify(data)
-      })
+chrome.runtime.onMessage.addListener(function() {
+  'use strict';
+  // TODO: Check, whether this isn't registered multiple times
+  window.addEventListener('beforeunload', onWebsiteLeave);
+  registerVideoEvents();
+});
 
-    }
+/**
+ * Register event listeners for a HTMLCollection of videos.
+ */
+function registerVideoEvents() {
+  'use strict';
+  var pageLoadTime = new Date() / 1000;
+  var vids = document.getElementsByTagName('video');
 
-    function startEvent(ele) {
-      console.log("playing!")
-      console.log(ele.duration)
-      ele.playingSince = new Date() / 1000;
-      ele.seekTime = ele.currentTime;
-      ele.isAudible = ((ele.volume * !ele.muted) > 0);
-      // console.log(ele.playingSince, ele.isAudible)
-    }
-    function stopEvent(ele) {
-      console.log("stopping");
-      if (ele.playingSince == undefined) {
-        ele.playingSince = pageLoadTime;
-        ele.isAudible = ((ele.volume * !ele.muted) > 0);
-      }
-      if (ele.playingSince && ele.isAudible) {
-        videoWatched(ele);
-      }
-      ele.playingSince = false;
-      ele.isAudible = false;
-      ele.seekTime = ele.currentTime;
-      // console.log(ele.playingSince, ele.isAudible)
-    }
-
-    var vids = document.getElementsByTagName('video')
-    var pageLoadTime = new Date() / 1000;
-    // vids is an HTMLCollection
-    for (var i = 0; i < vids.length; i++ ) {
-      if (vids.item(i).chromed === undefined) {
-        vids.item(i).chromed = true;
-        // Playing event
-        vids.item(i).seekTime = vids.item(i).currentTime;
-
-        vids.item(i).addEventListener("playing", function(evt) {
-          startEvent(evt.currentTarget)
-        });
-
-        // Pause event
-        vids.item(i).addEventListener("pause", function(evt) {
-          stopEvent(evt.currentTarget);
-        });
-
-        vids.item(i).addEventListener("seeking", function (evt) {
-          stopEvent(evt.currentTarget);
-        });
-
-        // Seeking event
-        vids.item(i).addEventListener("volumechange", function(evt) {
-          // if is playing and was audible then a segment now finished
-          nowAudible = ((evt.currentTarget.volume * !evt.currentTarget.muted) > 0);
-          if (evt.currentTarget.playingSince && evt.currentTarget.isAudible && !nowAudible) {
-            videoWatched(evt.currentTarget);
-          }
-          evt.currentTarget.isAudible = nowAudible;
-          evt.currentTarget.isAudible
-          // console.log(evt.currentTarget.playingSince, evt.currentTarget.isAudible)
-        });
-      }
+  // vids is an HTMLCollection
+  for (var i = 0; i < vids.length; i++) {
+    var vid = vids.item(i);
+    // TODO: Add comment on what this is doing.
+    if (vid.chromed === undefined) {
+      registerVideoEvent(vid, pageLoadTime);
     }
   }
-);
+}
+
+/**
+ * Register event listeners for a single video.
+ *
+ * @param {HTMLVideoElement} video
+ * @param {number}           pageLoadTime
+ */
+function registerVideoEvent(video, pageLoadTime) {
+  'use strict';
+  video.chromed = true;
+  video.seekTime = video.currentTime;
+
+  video.addEventListener('playing', function(evt) {
+    startEvent(evt.currentTarget);
+  });
+
+  video.addEventListener('pause', function(evt) {
+    stopEvent(evt.currentTarget, pageLoadTime);
+  });
+
+  video.addEventListener('seeking', function(evt) {
+    stopEvent(evt.currentTarget, pageLoadTime);
+  });
+
+  // Seeking event
+  video.addEventListener('volumechange', onVolumeChanged);
+}
+
+/**
+ * Callback for changes in volume of a video.
+ *
+ * @param {{}}               event
+ * @param {HTMLVideoElement} event.currentTarget - The video with changed volume
+ */
+function onVolumeChanged(event) {
+  'use strict';
+  var logger = getLogger('onVolumeChanged');
+  var video = event.currentTarget;
+  nowAudible = ((video.volume * !video.muted) > 0);
+
+  // if is playing and was audible then a segment now finished
+  if (video.playingSince && video.isAudible && !nowAudible) {
+    videoWatched(video);
+  }
+
+  video.isAudible = nowAudible;
+  logger.debug(`Video is ${video.isAudible ? '' : 'not '} audible and playing since ${video.playingSince}`);
+}
+
+/**
+ * Save a visited website in Nostalgia.
+ *
+ * @param {{}}      request
+ * @param {boolean} request.save
+ * @param {string}  request.event_url - The URL triggering this request
+ * @param {{}}      sender
+ * @param {{}}      [sender.tab]
+ * @param {string}  sender.tab.url    - Contains the content script URL if present
+ */
+function onWebsiteVisited(request, sender) {
+  var logger = getLogger('onWebsiteVisited');
+  logger.debug(sender.tab ? 'from a content script: ' + sender.tab.url : 'from the extension');
+
+  if (request.save && request.event_url === window.location.href) {
+    var payload = {
+      html: document.documentElement.innerHTML,
+      url: window.location.href
+    };
+
+    logger.debug('Saving website ' + request.event_url);
+    chrome.runtime.sendMessage({
+      action: 'xhttp',
+      method: 'POST',
+      data: JSON.stringify(payload),
+      url: serverUrl + '/post_json'
+    });
+  }
+}
+
+/**
+ * Register stop video events before leaving.
+ */
+function onWebsiteLeave() {
+  'use strict';
+  var vids = document.getElementsByTagName('video');
+  var pageLoadTime = new Date() / 1000;
+
+  // vids is an HTMLCollection
+  for (var i = 0; i < vids.length; i++) {
+    stopEvent(vids.item(i), pageLoadTime);
+  }
+}
+
+/**
+ * Start Video recording.
+ *
+ * @param {HTMLVideoElement} ele
+ */
+function startEvent(ele) {
+  'use strict';
+  var logger = getLogger('startEvent');
+  logger.debug(`Playing for ${ele.duration}!`);
+
+  ele.playingSince = new Date() / 1000;
+  ele.seekTime = ele.currentTime;
+  ele.isAudible = ((ele.volume * !ele.muted) > 0);
+  logger.debug(`Video is ${ele.isAudible ? '' : 'not '} audible and playing since ${ele.playingSince}`);
+}
+
+/**
+ * Stop video and submit as watched.
+ *
+ * @param {HTMLVideoElement} ele
+ * @param {number} pageLoadTime
+ */
+function stopEvent(ele, pageLoadTime) {
+  'use strict';
+  var logger = getLogger('stopEvent');
+  logger.debug('Stopping');
+
+  if (ele.playingSince == undefined) {
+    ele.playingSince = pageLoadTime;
+    ele.isAudible = ((ele.volume * !ele.muted) > 0);
+  }
+
+  if (ele.playingSince && ele.isAudible) {
+    videoWatched(ele);
+  }
+
+  ele.playingSince = false;
+  ele.isAudible = false;
+  ele.seekTime = ele.currentTime;
+  logger.debug(`Video is ${ele.isAudible ? '' : 'not '} audible and played since ${ele.playingSince}`);
+}
+
+/**
+ * Register a YouTube video as watched.
+ *
+ * @param {HTMLVideoElement} ele
+ */
+function videoWatched(ele) {
+  'use strict';
+  var logger = getLogger('videoWatched');
+  var now = new Date() / 1000;
+  // TODO: Check, whether there's a more robust way to read this
+  // TODO: Check YouTube API on this numbers
+  var ytSentimentSelector = 'paper-tooltip.style-scope.ytd-sentiment-bar-renderer > #tooltip';
+  var ytLikeDislikeElement = document.querySelector(ytSentimentSelector);
+  var ytLikeDislike = [null, null];
+
+  if (ytLikeDislikeElement) {
+    ytLikeDislike = ytLikeDislikeElement
+      .innerText  // TODO: Perhaps textContent?
+      .trim()
+      .split(" / ")
+      .map(function(likeAndDislike) {
+        // Parse as Number without thousands-sepeators
+        return parseInt(likeAndDislike.replace('.', '').replace(',', ''), 10);
+      });
+  }
+
+  var payload = {
+    playingSince: ele.playingSince,
+    seekTime: ele.seekTime,
+    playingUntil: now,
+    duration: now - ele.playingSince,
+    totalClipDuration: ele.duration,
+    pageLoadTime: pageLoadTime,
+    loc: window.location.href,
+    title: document.title,
+    likes: ytLikeDislike[0],
+    dislikes: ytLikeDislike[1]
+  };
+
+  logger.debug('Submitting watched video to backend', payload);
+  chrome.runtime.sendMessage({
+    action: 'xhttp',
+    method: 'POST',
+    data: JSON.stringify(payload),
+    url: serverUrl + '/video_watched'
+  });
+}
+
+/**
+ * @typedef Logger
+ * @type {{}}
+ * @property {callback} debug
+ * @property {callback} error
+ * @property {callback} fatal
+ * @property {callback} info
+ * @property {callback} log
+ * @property {callback} warn
+ */
+
+/**
+ * Small factory method to generate Python-like loggers.
+ *
+ * @param {string} name
+ * @returns {Logger}
+ */
+function getLogger(name) {
+  'use strict';
+  return {
+    debug: function(args) { console.debug(    `${name} [DEBUG]: ${args}`) },
+    error: function(args) { console.error(    `${name} [ERROR]: ${args}`) },
+    fatal: function(args) { console.exception(`${name} [FATAL]: ${args}`) },
+    info:  function(args) { console.info(    ` ${name} [INFO]: ${args}`)  },
+    log:   function(args) { console.log(    `  ${name} [LOG]: ${args}`)   },
+    warn:  function(args) { console.warn(    ` ${name} [WARN]: ${args}`)  }
+  };
+}
