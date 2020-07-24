@@ -1,28 +1,34 @@
 {
-  "name": "nostalgia_chrome",
-  "manifest_version": 2,
-  "description": "Keep and utilize your internet history, privately",
-  "content_scripts": [
-    {
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
-      "js": ["content.js"]
-    }
-  ],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "browser_action": {
-    "default_icon": "icon.png"
-  },
-  "icons": { "16": "Nostalgia-C_16x16.png",
-             "48": "Nostalgia-C_48x48.png",
-             "128": "Nostalgia-C_128x128.png" },
-  "permissions": [
-    "webNavigation"
-  ],
-  "version": "0.1"
+    "name": "nostalgia_chrome",
+    "manifest_version": 2,
+    "description": "Keep and utilize your internet history, privately",
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_icon": "icon.png"
+    },
+    "icons": {
+        "16": "Nostalgia-C_16x16.png",
+        "48": "Nostalgia-C_48x48.png",
+        "128": "Nostalgia-C_128x128.png"
+    },
+    "permissions": [
+        "webNavigation"
+    ],
+    "version": "0.1"
 }
