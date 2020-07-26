@@ -81,8 +81,9 @@ function onVolumeChanged(event) {
  * Save a visited website in Nostalgia.
  *
  * @param {{}}      request
- * @param {boolean} request.save
  * @param {string}  request.event_url - The URL triggering this request
+ * @param {boolean} request.save
+ * @param {string}  request.tabId     - The tabId to update the icon for
  * @param {{}}      sender
  * @param {{}}      [sender.tab]
  * @param {string}  sender.tab.url    - Contains the content script URL if present
@@ -102,7 +103,8 @@ function onWebsiteVisited(request, sender) {
       action: 'xhttp',
       method: 'POST',
       data: JSON.stringify(payload),
-      url: serverUrl + '/post_json'
+      url: serverUrl + '/post_json',
+      tabId: request.tabId
     });
   }
 }
@@ -230,6 +232,7 @@ function videoWatched(ele) {
  */
 function getLogger(name) {
   'use strict';
+  // Heads up! Get logged to the console of the page you're looking at!
   return {
     debug: function(args) { console.debug(    `${name} [DEBUG]: ${args}`) },
     error: function(args) { console.error(    `${name} [ERROR]: ${args}`) },
