@@ -127,7 +127,7 @@ function onMessage(request, sender, callback) {
 function setSuccessIcon(tabId) {
   'use strict';
   var logger = getLogger('setSuccessIcon');
-  const iconPath = chrome.runtime.getURL('Nostalgia-C-success_48x48.png');
+  const iconPath = chrome.runtime.getURL('Nostalgia-C-success_128x128.png');
   logger.debug('Setting icon to ', iconPath);
   return chrome.browserAction.setIcon({
     path: iconPath,
@@ -142,7 +142,7 @@ function setSuccessIcon(tabId) {
 function setFailureIcon(tabId) {
   'use strict';
   var logger = getLogger('setFailureIcon');
-  const iconPath = chrome.runtime.getURL('Nostalgia-C-error_48x48.png');
+  const iconPath = chrome.runtime.getURL('Nostalgia-C-error_128x128.png');
   logger.debug('Setting icon to ', iconPath);
   return chrome.browserAction.setIcon({
     path: iconPath,
