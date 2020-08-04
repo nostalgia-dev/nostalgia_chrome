@@ -28,7 +28,12 @@
         "128": "Nostalgia-C_128x128.png"
     },
     "permissions": [
+        "storage",
         "webNavigation"
     ],
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": false
+    },
     "version": "0.1"
 }
