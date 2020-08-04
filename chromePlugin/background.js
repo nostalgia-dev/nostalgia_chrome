@@ -2,6 +2,7 @@ getLogger('background').debug('Nostalgia background script loaded');
 chrome.webNavigation.onHistoryStateUpdated.addListener(onHistoryStateUpdated);
 chrome.webNavigation.onCompleted.addListener(onCompleted);
 chrome.runtime.onMessage.addListener(onMessage);
+chrome.storage.onChanged.addListener(onStorageChanged);
 
 /**
  * SPA-triggered page navigation.
@@ -148,6 +149,18 @@ function setFailureIcon(tabId) {
     path: iconPath,
     tabId: tabId
   });
+}
+
+/**
+ * Updating XHR based on preferences.
+ * 
+ * @param {{}}     changes  - Changed key with old and new value
+ * @param {string} areaName - Either "sync", "local" or "managed"
+ */
+function onStorageChanged(changes, areaName) {
+  'use strict';
+  var logger = getLogger('onStorageChanged');
+  logger.log('Change received', changes, areaName);
 }
 
 /**
