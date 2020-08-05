@@ -60,32 +60,33 @@
 
     run();
 
-    /**
-     * @typedef Logger
-     * @type {{}}
-     * @property {callback} debug
-     * @property {callback} error
-     * @property {callback} fatal
-     * @property {callback} info
-     * @property {callback} log
-     * @property {callback} warn
-     */
+  /**
+   * @typedef Logger
+   * @type {{}}
+   * @property {callback} debug
+   * @property {callback} error
+   * @property {callback} fatal
+   * @property {callback} info
+   * @property {callback} log
+   * @property {callback} warn
+   */
 
-    /**
-     * Small factory method to generate Python-like loggers.
-     *
-     * @param {string} name
-     * @returns {Logger}
-     */
-    function getLogger(name) {
-      'use strict';
-      return {
-        debug: function(...args) { console.debug(    `${name} [DEBUG]: `, ...args) },
-        error: function(...args) { console.error(    `${name} [ERROR]: `, ...args) },
-        fatal: function(...args) { console.exception(`${name} [FATAL]: `, ...args) },
-        info:  function(...args) { console.info(    ` ${name} [INFO]: `,  ...args) },
-        log:   function(...args) { console.log(    `  ${name} [LOG]: `,   ...args) },
-        warn:  function(...args) { console.warn(    ` ${name} [WARN]: `,  ...args) }
-      };
-    }
+  /**
+   * Small factory method to generate Python-like loggers.
+   *
+   * @param {string} name
+   * @returns {Logger}
+   */
+  function getLogger(name) {
+    'use strict';
+    // Heads up! Get logged to the console of the page you're looking at!
+    return {
+      debug: function(...args) { console.debug(    `${name} [DEBUG]: `, ...args) },
+      error: function(...args) { console.error(    `${name} [ERROR]: `, ...args) },
+      fatal: function(...args) { console.exception(`${name} [FATAL]: `, ...args) },
+      info:  function(...args) { console.info(    ` ${name} [INFO]: `,  ...args) },
+      log:   function(...args) { console.log(    `  ${name} [LOG]: `,   ...args) },
+      warn:  function(...args) { console.warn(    ` ${name} [WARN]: `,  ...args) }
+    };
+  }
 })();
