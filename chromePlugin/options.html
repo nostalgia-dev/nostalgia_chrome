@@ -48,8 +48,9 @@
                     </label>
                     <input
                         id="nostalgia-server"
+                        name="nostalgia-server"
                         type="url"
-                        value="http://localhost:21487"
+                        value=""
                         autofocus />
                 </div>
 
@@ -57,7 +58,21 @@
                     <label for="downtime-ms">
                         Wait before tracking page in milliseconds
                     </label>
-                    <input id="downtime-ms" type="number" value="1000" />
+                    <input
+                        id="downtime-ms"
+                        name="downtime-ms"
+                        type="number"
+                        value="" />
+                </div>
+
+                <div>
+                    <button type="button" id="reset-defaults">
+                        Reset to defaults
+                    </button>
+
+                    <button type="submit" id="save">
+                        Save changes
+                    </button>
                 </div>
             </form>
         </div>
