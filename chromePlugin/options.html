@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nostalgia settings</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        * + * {
+            margin-block-start: 1em;
+        }
+
+        body,
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            padding-inline-start: 1em;
+            padding-inline-end: 1em;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 0.25em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+    </header>
+    <main>
+        <h1>Nostalgia Extension Settings</h1>
+        <div>
+            <form>
+                <div>
+                    <label for="nostalgia-server">
+                        Nostalgia server
+                    </label>
+                    <input
+                        id="nostalgia-server"
+                        name="nostalgia-server"
+                        type="url"
+                        value=""
+                        autofocus />
+                </div>
+
+                <div>
+                    <label for="downtime-ms">
+                        Wait before tracking page in milliseconds
+                    </label>
+                    <input
+                        id="downtime-ms"
+                        name="downtime-ms"
+                        type="number"
+                        value="" />
+                </div>
+
+                <div>
+                    <button type="button" id="reset-defaults">
+                        Reset to defaults
+                    </button>
+
+                    <button type="submit" id="save">
+                        Save changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2019-2020 Nostalgia</p>
+    </footer>
+    <script src="./options.js"></script>
+</body>
+</html>
