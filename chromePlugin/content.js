@@ -17,7 +17,7 @@
 
   /**
    * Updating XHR based on preferences.
-   * 
+   *
    * @param {{}}     changes  - Changed key with old and new value
    * @param {string} areaName - Either "sync", "local" or "managed"
    */
@@ -70,7 +70,7 @@
     });
 
     // Seeking event
-    video.addEventListener('volumechange', onVolumeChanged);
+    video.addEventListener('volumechange', function(e) {onVolumeChanged(e, pageLoadTime)});
   }
 
   /**
@@ -79,7 +79,7 @@
    * @param {{}}               event
    * @param {HTMLVideoElement} event.currentTarget - The video with changed volume
    */
-  function onVolumeChanged(event) {
+  function onVolumeChanged(event, pageLoadTime) {
     'use strict';
     var logger = getLogger('onVolumeChanged');
     var video = event.currentTarget;
@@ -87,7 +87,7 @@
 
     // if is playing and was audible then a segment now finished
     if (video.playingSince && video.isAudible && !nowAudible) {
-      videoWatched(video);
+      videoWatched(video, pageLoadTime);
     }
 
     video.isAudible = nowAudible;
@@ -173,7 +173,7 @@
     }
 
     if (ele.playingSince && ele.isAudible) {
-      videoWatched(ele);
+      videoWatched(ele, pageLoadTime);
     }
 
     ele.playingSince = false;
@@ -187,7 +187,7 @@
    *
    * @param {HTMLVideoElement} ele
    */
-  function videoWatched(ele) {
+  function videoWatched(ele, pageLoadTime) {
     'use strict';
     var logger = getLogger('videoWatched');
     var now = new Date() / 1000;
