@@ -208,6 +208,10 @@
         });
     }
 
+    if (ele.duration > 0 && ele.duration < 5) {
+      return;
+    }
+
     var payload = {
       playingSince: ele.playingSince,
       seekTime: ele.seekTime,
