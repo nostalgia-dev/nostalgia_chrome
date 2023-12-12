@@ -2,12 +2,56 @@
   'use strict';
   getLogger('background').debug('Nostalgia background script loaded');
   // "Global" values, scoped to this IIFE
-  var downtime = 1000;
 
+  chrome.alarms.onAlarm.addListener(onAlarm);
   chrome.webNavigation.onHistoryStateUpdated.addListener(onHistoryStateUpdated);
   chrome.webNavigation.onCompleted.addListener(onCompleted);
   chrome.runtime.onMessage.addListener(onMessage);
-  chrome.storage.onChanged.addListener(onStorageChanged);
+
+  function startAlarm(name, delayInMs) {
+    chrome.alarms.create(name, { delayInMinutes: delayInMs / 1000 / 60 });
+  }
+
+  function onAlarm(event) {
+    'use strict';
+    var logger = getLogger('onAlarm');
+    var name = event.name;
+
+    if (name === 'onHistoryStateUpdated') {
+      logger.debug('Querying for current tab');
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        'use strict';
+        if (tabs.length > 0) {
+          var tabId = tabs[0].id;
+          chrome.storage.local.get(name).then(function(stored_obj) {
+            'use strict';
+            var event_url = stored_obj[name];
+            logger.debug(`Submitting ${event_url} to tab #${tabId} for saving`);
+            chrome.tabs.sendMessage(tabId, {save: true, tabId: tabId, event_url: event_url});
+          });
+        }
+        logger.debug('No active tabs');
+      });
+      chrome.alarms.clear(name);
+    }
+
+    if (name === 'onCompleted') {
+      logger.debug('Querying for current tab');
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        'use strict';
+        if (tabs.length > 0) {
+          var tabId = tabs[0].id;
+          chrome.storage.local.get(name).then(function(stored_obj) {
+            'use strict';
+            var event_url = stored_obj[name];
+            logger.debug(`Submitting ${event_url} to tab #${tabId} for saving`);
+            chrome.tabs.sendMessage(tabId, {save: true, tabId: tabId, event_url: event_url});
+          });
+        }
+        logger.debug('No active tabs');
+      });
+    }
+  }
 
   /**
    * SPA-triggered page navigation.
@@ -20,22 +64,19 @@
     var logger = getLogger('onHistoryStateUpdated');
     logger.debug(`Called for ${event.url}`);
 
-    if (event.url !== 'about:blank') {
-      // console.log(event);
-      setTimeout(function() {
-        'use strict';
-        logger.debug('Querying for current tab');
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          'use strict';
-          if (tabs.length) {
-            var tabId = tabs[0].id;
-            logger.debug(`Submitting ${event.url} to tab #${tabId} for saving`);
-            chrome.tabs.sendMessage(tabId, {save: true, tabId: tabId, event_url: event.url});
-          }
-          logger.debug('No active tabs');
-        });
-      }, downtime);
+    if (event.url === 'about:blank') {
+      return;
     }
+
+    if (event.url.startsWith('moz-extension://')) {
+      return;
+    }
+
+		chrome.storage.local.get('downtime-ms').then(function (stored_obj) {
+			var downtime = stored_obj['downtime-ms'] || 1000
+      startAlarm('onHistoryStateUpdated', downtime);
+      chrome.storage.local.set({'onHistoryStateUpdated': event.url});
+		})
   }
 
   /**
@@ -49,26 +90,25 @@
     var logger = getLogger('onCompleted');
     logger.debug(`Called for ${event.url}`);
 
-    if (event.url !== 'about:blank') {
-      setTimeout(function() {
-        'use strict';
-        logger.debug('Querying for current tab');
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-          'use strict';
-          if (tabs.length) {
-            var tabId = tabs[0].id;
-            logger.debug(`Submitting ${event.url} to tab #${tabId} for saving`);
-            chrome.tabs.sendMessage(tabId, {save: true, tabId: tabId, event_url: event.url});
-          }
-          logger.debug('No active tabs');
-        });
-      }, downtime);
+    if (event.url === 'about:blank') {
+      return;
     }
+
+    if (event.url.startsWith('moz-extension://')) {
+      return;
+    }
+
+		chrome.storage.local.get('downtime-ms').then(function (stored_obj) {
+			var downtime = stored_obj['downtime-ms'] || 1000
+      startAlarm('onCompleted', downtime);
+      chrome.storage.local.set({'onCompleted': event.url});
+		})
   }
 
   /**
    * Received information from content script to store.
    *
+   * @async
    * @param {{}}       request
    * @param {string}   request.action       - 'xhttp' to trigger request
    * @param {*}        [request.data]       - POST payload
@@ -78,49 +118,45 @@
    * @param {*}        sender
    * @param {callback} callback             - Called upon request completion
    */
-  function onMessage(request, sender, callback) {
+  async function onMessage(request, sender, callback) {
     'use strict';
     var logger = getLogger('onMessage');
     logger.debug('received and sending externally');
     logger.debug(JSON.stringify(request));
 
     if (request.action === 'xhttp') {
-      var xhttp = new XMLHttpRequest();
       var method = request.method ? request.method.toUpperCase() : 'GET';
+      var headers = {};
+      var body = null;
+      /* TODO: Define a timeout, then use AbortController
+      var controller = new AbortController();
+      var signal = controller.signal;
+      */
 
-      xhttp.onload = function() {
-        'use strict';
-        logger.debug('Received', xhttp.responseText);
-        setSuccessIcon(request.tabId);
-        callback(xhttp.responseText);
-      };
-
-      xhttp.onerror = function(exception) {
-        'use strict';
-        logger.error('Failed to submit', exception);
-        // Do whatever you want on error. Don't forget to invoke the
-        // callback to clean up the communication port.
-        // TODO: Show different icon in browser!
-        // Perhaps via browser.extension.getURL('Nostalgia-C_128x128.png') ?
-        setFailureIcon(request.tabId);
-        callback(null);
-      };
-
-      xhttp.ontimeout = function(exception) {
-        'use strict';
-        logger.error('Connection timed out', exception);
-        setFailureIcon(request.tabId);
-        callback(null);
-      }
-
-      // Trigger submission
       logger.debug(`Fetching ${request.url} via ${method}`);
-      xhttp.open(method, request.url, true);
+
       if (method == 'POST') {
-        xhttp.setRequestHeader('Content-Type', 'application/json');
+        // Already JSON-stringified because of message passing
+        body = request.data;
+        headers['Content-Type'] = 'application/json';
       }
+
       logger.debug('Payload', request.data);
-      xhttp.send(request.data);
+
+      try {
+        const response = await fetch(
+          request.url,
+          { body, headers, method/*, signal*/ }
+        );
+        const text = await response.text();
+        logger.debug('Received', text);
+        setSuccessIcon(request.tabId);
+        callback(text);
+      } catch (exception) {
+        logger.error('Failed to submit', exception);
+        setFailureIcon(request.tabId);
+        callback(null);
+      }
     }
   }
 
@@ -135,7 +171,7 @@
     var logger = getLogger('setSuccessIcon');
     const iconPath = chrome.runtime.getURL('Nostalgia-C-success_128x128.png');
     logger.debug('Setting icon to ', iconPath);
-    return chrome.browserAction.setIcon({
+    return chrome.action.setIcon({
       path: iconPath,
       tabId: tabId
     });
@@ -150,23 +186,10 @@
     var logger = getLogger('setFailureIcon');
     const iconPath = chrome.runtime.getURL('Nostalgia-C-error_128x128.png');
     logger.debug('Setting icon to ', iconPath);
-    return chrome.browserAction.setIcon({
+    return chrome.action.setIcon({
       path: iconPath,
       tabId: tabId
     });
-  }
-
-  /**
-   * Updating XHR based on preferences.
-   * 
-   * @param {{}}     changes  - Changed key with old and new value
-   * @param {string} areaName - Either "sync", "local" or "managed"
-   */
-  function onStorageChanged(changes, areaName) {
-    'use strict';
-    var logger = getLogger('onStorageChanged');
-    logger.debug('Change received', changes, areaName);
-    downtime = changes['downtime-ms'].newValue;
   }
 
   /**
@@ -174,7 +197,6 @@
    * @type {{}}
    * @property {callback} debug
    * @property {callback} error
-   * @property {callback} fatal
    * @property {callback} info
    * @property {callback} log
    * @property {callback} warn
@@ -189,12 +211,11 @@
   function getLogger(name) {
     'use strict';
     return {
-      debug: function(...args) { console.debug(    `${name} [DEBUG]: `, ...args) },
-      error: function(...args) { console.error(    `${name} [ERROR]: `, ...args) },
-      fatal: function(...args) { console.exception(`${name} [FATAL]: `, ...args) },
-      info:  function(...args) { console.info(    ` ${name} [INFO]: `,  ...args) },
-      log:   function(...args) { console.log(    `  ${name} [LOG]: `,   ...args) },
-      warn:  function(...args) { console.warn(    ` ${name} [WARN]: `,  ...args) }
+      debug: console.debug.bind(console, name + ' [DEBUG]: %s'),
+      error: console.error.bind(console, name + ' [ERROR]: %s'),
+      info:  console.info.bind(console, name + ' [INFO]: %s'),
+      log:   console.log.bind(console, name + ' [LOG]: %s'),
+      warn:  console.warn.bind(console, name + ' [WARN]: %s')
     };
   }
 })();
