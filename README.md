@@ -66,6 +66,22 @@ On Linux (systemctl based):
     pip install sysdm
     sysdm create "nostalgia_chrome run_server" --extensions ""
 
+Edit `$HOME/.config/systemd/user/nostalgia_chrome_src.service` by modifying the `ExecStart` line to
+
+```
+ExecStart=/absolute/path/to/virtualenv/bin/python -m /absolute/path/to/virtualenv/bin/nostalgia_chrome run_server
+```
+
+Do the same with `$Home/.config/systemd/user/nostalgia_chrome_src_monitor.service`.
+
+To inform SystemD about changes on the file system and to enable the service, run these commands.
+
+```sh
+  systemctl --user daemon-reload
+  systemctl enable --user nostalgia_chrome_src
+  systemctl status --user nostalgia_chrome_src.service  # Check status
+```
+
 On Windows awaiting contribution for how to do this https://github.com/nostalgia-dev/nostalgia_chrome/issues/2
 
 On OSX awaiting contribution for how to do this https://github.com/nostalgia-dev/nostalgia_chrome/issues/1
