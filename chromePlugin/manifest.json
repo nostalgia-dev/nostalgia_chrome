@@ -1,39 +1,38 @@
 {
     "name": "nostalgia_chrome",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "description": "Keep and utilize your internet history, privately",
     "content_scripts": [
-        {
-            "matches": [
-                "http://*/*",
-                "https://*/*"
-            ],
-            "js": [
-                "content.js"
-            ]
-        }
+      {
+        "matches": [
+          "http://*/*",
+          "https://*/*"
+        ],
+        "js": [
+          "content.js"
+        ]
+      }
     ],
     "background": {
-        "scripts": [
-            "background.js"
-        ],
-        "persistent": false
+      "service_worker": "background.js"
     },
-    "browser_action": {
-        "default_icon": "icon.png"
-    },
-    "icons": {
+    "action": {
+      "default_icon": {
         "16": "Nostalgia-C_16x16.png",
         "48": "Nostalgia-C_48x48.png",
         "128": "Nostalgia-C_128x128.png"
+      }
     },
     "permissions": [
-        "storage",
-        "webNavigation"
+      "activeTab",
+      "alarms",
+      "storage",
+      "tabs",
+      "webNavigation"
     ],
     "options_ui": {
         "page": "options.html",
         "open_in_tab": false
     },
-    "version": "0.1"
+    "version": "0.2"
 }

@@ -1,10 +1,7 @@
 (function() {
   'use strict';
   getLogger('content').debug('Content script loaded');
-  // "Global" values, scoped to this IIFE
-  var serverUrl = 'http://localhost:21487';
 
-  chrome.storage.onChanged.addListener(onStorageChanged);
   chrome.runtime.onMessage.addListener(onWebsiteVisited);
 
   // video listening / sending
@@ -14,19 +11,6 @@
     window.addEventListener('beforeunload', onWebsiteLeave);
     registerVideoEvents();
   });
-
-  /**
-   * Updating XHR based on preferences.
-   *
-   * @param {{}}     changes  - Changed key with old and new value
-   * @param {string} areaName - Either "sync", "local" or "managed"
-   */
-  function onStorageChanged(changes, areaName) {
-    'use strict';
-    var logger = getLogger('onStorageChanged');
-    logger.debug('Change received', changes, areaName);
-    serverUrl = changes['nostalgia-server'].newValue;
-  }
 
   /**
    * Register event listeners for a HTMLCollection of videos.
@@ -111,17 +95,20 @@
 
     if (request.save && request.event_url === window.location.href) {
       var payload = {
-        html: document.documentElement.innerHTML,
+        html: document.documentElement.outerHTML,
         url: window.location.href
       };
 
-      logger.debug('Saving website ' + request.event_url);
-      chrome.runtime.sendMessage({
-        action: 'xhttp',
-        method: 'POST',
-        data: JSON.stringify(payload),
-        url: serverUrl + '/post_json',
-        tabId: request.tabId
+      chrome.storage.local.get('nostalgia-server').then(function(stored_obj) {
+        var serverUrl = stored_obj['nostalgia-server'] || 'http://localhost:21487';
+        logger.debug('Saving website ' + request.event_url);
+        chrome.runtime.sendMessage({
+          action: 'xhttp',
+          method: 'POST',
+          data: JSON.stringify(payload),
+          url: serverUrl + '/post_json',
+          tabId: request.tabId
+        });
       });
     }
   }
@@ -225,12 +212,15 @@
       dislikes: ytLikeDislike[1]
     };
 
-    logger.debug('Submitting watched video to backend', payload);
-    chrome.runtime.sendMessage({
-      action: 'xhttp',
-      method: 'POST',
-      data: JSON.stringify(payload),
-      url: serverUrl + '/video_watched'
+    chrome.storage.local.get('nostalgia-server').then(function(stored_obj) {
+      var serverUrl = stored_obj['nostalgia-server'] || 'http://localhost:21487';
+      logger.debug('Submitting watched video to backend', payload);
+      chrome.runtime.sendMessage({
+        action: 'xhttp',
+        method: 'POST',
+        data: JSON.stringify(payload),
+        url: serverUrl + '/video_watched'
+      });
     });
   }
 
@@ -239,7 +229,6 @@
    * @type {{}}
    * @property {callback} debug
    * @property {callback} error
-   * @property {callback} fatal
    * @property {callback} info
    * @property {callback} log
    * @property {callback} warn
@@ -255,12 +244,11 @@
     'use strict';
     // Heads up! Get logged to the console of the page you're looking at!
     return {
-      debug: function(...args) { console.debug(    `${name} [DEBUG]: `, ...args) },
-      error: function(...args) { console.error(    `${name} [ERROR]: `, ...args) },
-      fatal: function(...args) { console.exception(`${name} [FATAL]: `, ...args) },
-      info:  function(...args) { console.info(    ` ${name} [INFO]: `,  ...args) },
-      log:   function(...args) { console.log(    `  ${name} [LOG]: `,   ...args) },
-      warn:  function(...args) { console.warn(    ` ${name} [WARN]: `,  ...args) }
+      debug: console.debug.bind(console, name + ' [DEBUG]: %s'),
+      error: console.error.bind(console, name + ' [ERROR]: %s'),
+      info:  console.info.bind(console, name + ' [INFO]: %s'),
+      log:   console.log.bind(console, name + ' [LOG]: %s'),
+      warn:  console.warn.bind(console, name + ' [WARN]: %s')
     };
   }
 })();
